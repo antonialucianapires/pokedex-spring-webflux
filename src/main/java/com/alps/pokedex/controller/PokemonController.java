@@ -38,6 +38,22 @@ public class PokemonController {
         return repository.save(pokemon);
     }
 
+    @PutMapping("{id}")
+    public Mono<ResponseEntity<Pokemon>> updatePokemon(@PathVariable(value = "id") String id,
+                                                       @RequestBody Pokemon pokemon) {
+        return repository.findById(id)
+                .flatMap(existingPokemon -> {
+                    existingPokemon.setNome(pokemon.getNome());
+                    existingPokemon.setCategoria(pokemon.getCategoria());
+                    existingPokemon.setHabilidades(pokemon.getHabilidades());
+                    existingPokemon.setPeso(pokemon.getPeso());
+                    return repository.save(existingPokemon);
+                })
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+
+    }
+
     @GetMapping(value = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<PokemonEvent> getPokemonEvents() {
         return Flux.interval(Duration.ofSeconds(5))
