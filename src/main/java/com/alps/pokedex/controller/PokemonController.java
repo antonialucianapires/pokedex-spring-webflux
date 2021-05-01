@@ -28,5 +28,10 @@ public class PokemonController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<Pokemon> savePokemon(@RequestBody Pokemon pokemon) {
+        return repository.save(pokemon);
+    }
 
 }
